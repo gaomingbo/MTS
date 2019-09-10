@@ -1,5 +1,7 @@
 package com.tony;
 
+import org.apache.log4j.Logger;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,12 +10,14 @@ import java.util.Map;
 
 public class FfmpegServer {
 
+    private static Logger logger = Logger.getLogger(FfmpegServer.class);
+
 //     "ffmpeg -f rtsp -rtsp_transport tcp -i " +
 //      "\"rtsp://admin:tn123456@zhengzhoutn1.wicp.vip:554/cam/realmonitor?channel=1&subtype=1\" -c copy -f " +
 //      "hls -hls_time 2.0 -hls_list_size 0 -hls_wrap 15 /usr/share/nginx/html/hls/test.m3u8";
 
     /**
-     * hls url: http://119.3.161.94:20000/live/cameraid/100000$0/0.m3u8
+     * hls url: http://119.3.161.94:20000/live/cameraid/100000@0/0.m3u8
      *
      * record url: http://119.3.161.94:20000/record/20190825000001/0.m3u8
      */
@@ -39,7 +43,7 @@ public class FfmpegServer {
             "-f", "hls",
             "-hls_time", "2.0",
             "-hls_list_size", "0",
-            "-hls_wrap", "20",
+            "-hls_wrap", "5",
             "xxxxx"};
 
     /**
@@ -89,15 +93,10 @@ public class FfmpegServer {
         builder.command(commend);
         try {
             Process process = builder.start();
-//            InputStream callback = process.getInputStream();
             if (cameraId != null) {
                 processMap.put(cameraId, process);
             }
             dealStream(process);
-//            byte[] re=new byte[1024];
-//            while (callback.read(re)!= -1) {
-//                System.out.println(new String(re, "UTF-8"));
-//            }
             return process;
         } catch (IOException e) {
             e.printStackTrace();
@@ -117,7 +116,7 @@ public class FfmpegServer {
                 String line = null;
                 try {
                     while ((line = in.readLine()) != null) {
-                        System.out.println("output: " + line);
+                        logger.info("output: " + line);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -138,7 +137,7 @@ public class FfmpegServer {
                 String line = null;
                 try {
                     while ((line = err.readLine()) != null) {
-                        System.out.println("err: " + line);
+                        logger.info("err: " + line);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -151,16 +150,6 @@ public class FfmpegServer {
                 }
             }
         }.start();
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        cmd("1", "ping", "127.0.0.1");
-        while (true) {
-            Thread.sleep(500);
-            System.out.println(processMap.get("1").isAlive());
-            processMap.get("1").destroy();
-            System.out.println(processMap.get("1").isAlive());
-        }
     }
 
 }

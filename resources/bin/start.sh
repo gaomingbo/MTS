@@ -20,7 +20,7 @@ nohup ${JAVA_HOME}/java \
 -XX:+HeapDumpOnOutOfMemoryError \
 -XX:+ExitOnOutOfMemoryError \
 -cp "${CONF_DIR}":"${CLASSPATH}" \
-com.tony.Server 2>&1 >/dev/null &
+com.tony.MTSServer 2>&1 >/dev/null &
 
 
 pid=`sh ${START_SCRIPT_HOME}/status.sh`

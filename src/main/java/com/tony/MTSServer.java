@@ -1,9 +1,11 @@
 package com.tony;
 
 
+import com.tony.utils.Config;
 import com.tony.utils.FileUtils;
 import com.tony.utils.JsonUtils;
 import com.tony.utils.SocketUtils;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -15,28 +17,30 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Server {
+public class MTSServer {
 
-  private static Server server;
+  private static Logger logger = Logger.getLogger(MTSServer.class);
+
+  private static MTSServer server;
 
   private static ServerSocketChannel serverSocketChannel;
 
   private static ExecutorService threadTool = Executors.newCachedThreadPool();
 
-  private Server() {
+  private MTSServer() {
 
   }
 
-  public static Server getInstance() {
-    synchronized ( Server.class) {
+  public static MTSServer getInstance() {
+    synchronized ( MTSServer.class) {
       if (null == server) {
-        server = new Server();
+        server = new MTSServer();
       }
       return server;
     }
   }
 
-  public Server init(String serverIp, int port) throws IOException {
+  public MTSServer init(String serverIp, int port) throws IOException {
     InetSocketAddress inetSocketAddress = new InetSocketAddress(serverIp, port);
     serverSocketChannel = ServerSocketChannel.open();
     serverSocketChannel.socket().bind(inetSocketAddress);
@@ -55,6 +59,7 @@ public class Server {
       }
     };
     threadTool.submit(start);
+    logger.info("start mts server success");
   }
 
   private Runnable handler(SocketChannel channel) {
@@ -81,6 +86,7 @@ public class Server {
   }
 
   private String invoke(String param) {
+    logger.info("invoke param: " + param);
     Map<String, String> map = JsonUtils.string2Obj(param, Map.class);
     if (null == map) return "FAILED";
     try {
@@ -119,6 +125,7 @@ public class Server {
       }
       return "SUCCESS";
     } catch (Exception e) {
+      logger.error(e);
       e.printStackTrace();
       return "FAILED";
     }
@@ -154,15 +161,6 @@ public class Server {
         }
       }
     };
-  }
-
-  public static void main(String[] args) {
-    try {
-      Server server = Server.getInstance().init("192.168.0.174", 9011);
-      server.startService();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
 }

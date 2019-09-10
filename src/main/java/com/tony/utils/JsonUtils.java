@@ -1,6 +1,5 @@
 package com.tony.utils;
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.InputStream;

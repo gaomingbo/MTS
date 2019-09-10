@@ -25,15 +25,15 @@ public class TestClient {
          * 	"rate":"0"
          * }
          */
-        String rlt = "{\"action\":\"0\",\"cameraId\":\"100000@0\"," +
-                "\"rtspUrl\":\"rtsp://admin:tn123456@zhengzhoutn1.wicp.vip:554/cam/realmonitor?channel=1&subtype=1\"," +
+        String rlt = "{\"action\":\"0\",\"cameraId\":\"100001@0\"," +
+                "\"rtspUrl\":\"rtsp://admin:tn123456@221.176.189.36:10554/cam/realmonitor?channel=1&subtype=1\"," +
                 "\"rate\":\"1\"}";
 
         String rlt2 = "{\"action\":\"2\", " +
                 "\"number\":\"20190825000001\"," +
                 "\"file\":\"/opt/20190825000001.dav\"}";
 
-        byte[] resDate = rlt2.getBytes();
+        byte[] resDate = rlt.getBytes();
         OutputStream out = socket.getOutputStream();
         out.write(SocketUtils.assembleData(resDate));
         out.flush();
